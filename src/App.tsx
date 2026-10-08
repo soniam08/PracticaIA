@@ -34,7 +34,7 @@ export default function App() {
     localStorage.setItem('ponos_users', JSON.stringify(users));
   }, [users]);
 
-  // Filtra los usuarios combinando búsqueda de texto y selección de rol
+  // Filtro combinado de búsqueda por texto y rol
   const filteredUsers = useMemo(() => {
     return users.filter((user) => {
       const matchText =
@@ -63,13 +63,31 @@ export default function App() {
   };
 
   const columns: ColumnsType<User> = [
-    { title: 'ID', dataIndex: 'id', key: 'id' },
-    { title: 'Nombre', dataIndex: 'nombre', key: 'nombre' },
-    { title: 'Email', dataIndex: 'email', key: 'email' },
+    { 
+      title: 'ID', 
+      dataIndex: 'id', 
+      key: 'id', 
+      width: 70, 
+      align: 'center' 
+    },
+    { 
+      title: 'Nombre', 
+      dataIndex: 'nombre', 
+      key: 'nombre', 
+      width: 180 
+    },
+    { 
+      title: 'Email', 
+      dataIndex: 'email', 
+      key: 'email', 
+      width: 260 
+    },
     {
       title: 'Rol',
       dataIndex: 'rol',
       key: 'rol',
+      width: 120,
+      align: 'center',
       render: (rol: string) => {
         const color = rol === 'Admin' ? 'red' : rol === 'Editor' ? 'blue' : 'green';
         return <Tag color={color}>{rol}</Tag>;
@@ -78,6 +96,7 @@ export default function App() {
     {
       title: 'Acciones',
       key: 'acciones',
+      width: 160,
       render: (_, record) => (
         <Space size="middle">
           <Button type="link" onClick={() => message.info(`Editando a ${record.nombre}`)}>
@@ -107,7 +126,6 @@ export default function App() {
         </Button>
       </div>
 
-      {/* Barra de Filtros y Búsqueda */}
       <Card style={{ marginBottom: 16 }}>
         <Row gutter={16}>
           <Col xs={24} sm={16}>

@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Table, Tag, Button, Typography, Space, Modal, Form, Input, Select, Popconfirm, message, Card, Row, Col } from 'antd';
+import { Table, Tag, Button, Typography, Space, Modal, Form, Input, Select, Popconfirm, message, Card, Row, Col, Statistic } from 'antd';
+import { UserOutlined, CrownOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 
 const { Title } = Typography;
@@ -33,6 +34,15 @@ export default function App() {
 
   useEffect(() => {
     localStorage.setItem('ponos_users', JSON.stringify(users));
+  }, [users]);
+
+  // Cálculo de métricas en tiempo real sobre la base total de usuarios
+  const stats = useMemo(() => {
+    const total = users.length;
+    const admins = users.filter((u) => u.rol === 'Admin').length;
+    const editors = users.filter((u) => u.rol === 'Editor').length;
+    const viewers = users.filter((u) => u.rol === 'Viewer').length;
+    return { total, admins, editors, viewers };
   }, [users]);
 
   const filteredUsers = useMemo(() => {
@@ -79,17 +89,13 @@ export default function App() {
     form.resetFields();
   };
 
-  // Función para exportar la lista de usuarios actual a archivo CSV
   const exportToCSV = () => {
     if (filteredUsers.length === 0) {
       message.warning('No hay usuarios para exportar');
       return;
     }
 
-    // Cabecera del archivo CSV
     const headers = ['ID', 'Nombre', 'Email', 'Rol'];
-
-    // Mapeo de filas con formato seguro frente a comas
     const rows = filteredUsers.map((u) => [
       u.id,
       `"${u.nombre.replace(/"/g, '""')}"`,
@@ -97,12 +103,10 @@ export default function App() {
       `"${u.rol}"`,
     ]);
 
-    // Construcción del contenido y creación del archivo Blob
     const csvContent = [headers.join(','), ...rows.map((row) => row.join(','))].join('\n');
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
 
-    // Disparador de descarga automática en el navegador
     const link = document.createElement('a');
     link.href = url;
     link.setAttribute('download', 'usuarios_ponos.csv');
@@ -183,6 +187,31 @@ export default function App() {
         </Space>
       </div>
 
+      {/* Tarjetas de Estadísticas */}
+      <Row gutter={16} style={{ marginBottom: 20 }}>
+        <Col xs={12} sm={6}>
+          <Card bordered={false} style={{ background: '#fafafa' }}>
+            <Statistic title="Total Usuarios" value={stats.total} prefix={<UserOutlined />} />
+          </Card>
+        </Col>
+        <Col xs={12} sm={6}>
+          <Card bordered={false} style={{ background: '#fff1f0' }}>
+            <Statistic title="Admins" value={stats.admins} valueStyle={{ color: '#cf1322' }} prefix={<CrownOutlined />} />
+          </Card>
+        </Col>
+        <Col xs={12} sm={6}>
+          <Card bordered={false} style={{ background: '#e6f7ff' }}>
+            <Statistic title="Editores" value={stats.editors} valueStyle={{ color: '#096dd9' }} prefix={<EditOutlined />} />
+          </Card>
+        </Col>
+        <Col xs={12} sm={6}>
+          <Card bordered={false} style={{ background: '#f6ffed' }}>
+            <Statistic title="Viewers" value={stats.viewers} valueStyle={{ color: '#389e0d' }} prefix={<EyeOutlined />} />
+          </Card>
+        </Col>
+      </Row>
+
+      {/* Barra de Filtros */}
       <Card style={{ marginBottom: 16 }}>
         <Row gutter={16}>
           <Col xs={24} sm={16}>

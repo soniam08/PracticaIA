@@ -79,6 +79,41 @@ export default function App() {
     form.resetFields();
   };
 
+  // Función para exportar la lista de usuarios actual a archivo CSV
+  const exportToCSV = () => {
+    if (filteredUsers.length === 0) {
+      message.warning('No hay usuarios para exportar');
+      return;
+    }
+
+    // Cabecera del archivo CSV
+    const headers = ['ID', 'Nombre', 'Email', 'Rol'];
+
+    // Mapeo de filas con formato seguro frente a comas
+    const rows = filteredUsers.map((u) => [
+      u.id,
+      `"${u.nombre.replace(/"/g, '""')}"`,
+      `"${u.email.replace(/"/g, '""')}"`,
+      `"${u.rol}"`,
+    ]);
+
+    // Construcción del contenido y creación del archivo Blob
+    const csvContent = [headers.join(','), ...rows.map((row) => row.join(','))].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+
+    // Disparador de descarga automática en el navegador
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', 'usuarios_ponos.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+
+    message.success('Reporte CSV descargado con éxito');
+  };
+
   const columns: ColumnsType<User> = [
     { 
       title: 'ID', 
@@ -138,9 +173,14 @@ export default function App() {
     <div style={{ padding: '24px', maxWidth: '1000px', margin: '0 auto' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
         <Title level={2} style={{ margin: 0 }}>Gestión de Usuarios - Prácticas Ponos</Title>
-        <Button type="primary" onClick={openCreateModal}>
-          Nuevo Usuario
-        </Button>
+        <Space>
+          <Button onClick={exportToCSV}>
+            Descargar CSV
+          </Button>
+          <Button type="primary" onClick={openCreateModal}>
+            Nuevo Usuario
+          </Button>
+        </Space>
       </div>
 
       <Card style={{ marginBottom: 16 }}>

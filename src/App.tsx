@@ -28,13 +28,13 @@ export default function App() {
   const [searchText, setSearchText] = useState('');
   const [selectedRole, setSelectedRole] = useState<string>('all');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingUser, setEditingUser] = useState<User | null>(null);
   const [form] = Form.useForm();
 
   useEffect(() => {
     localStorage.setItem('ponos_users', JSON.stringify(users));
   }, [users]);
 
-  // Filtro combinado de búsqueda por texto y rol
   const filteredUsers = useMemo(() => {
     return users.filter((user) => {
       const matchText =
@@ -50,16 +50,33 @@ export default function App() {
     message.success('Usuario eliminado correctamente');
   };
 
-  const handleAddUser = (values: { nombre: string; email: string; rol: 'Admin' | 'Editor' | 'Viewer' }) => {
-    const newUser: User = {
-      key: Date.now().toString(),
-      id: users.length > 0 ? Math.max(...users.map((u) => u.id)) + 1 : 1,
-      ...values,
-    };
-    setUsers([...users, newUser]);
+  const openCreateModal = () => {
+    setEditingUser(null);
+    form.resetFields();
+    setIsModalOpen(true);
+  };
+
+  const openEditModal = (record: User) => {
+    setEditingUser(record);
+    form.setFieldsValue(record);
+    setIsModalOpen(true);
+  };
+
+  const handleFinish = (values: { nombre: string; email: string; rol: 'Admin' | 'Editor' | 'Viewer' }) => {
+    if (editingUser) {
+      setUsers(users.map((u) => (u.id === editingUser.id ? { ...u, ...values } : u)));
+      message.success('Usuario actualizado correctamente');
+    } else {
+      const newUser: User = {
+        key: Date.now().toString(),
+        id: users.length > 0 ? Math.max(...users.map((u) => u.id)) + 1 : 1,
+        ...values,
+      };
+      setUsers([...users, newUser]);
+      message.success('Usuario creado con éxito');
+    }
     setIsModalOpen(false);
     form.resetFields();
-    message.success('Usuario creado con éxito');
   };
 
   const columns: ColumnsType<User> = [
@@ -99,7 +116,7 @@ export default function App() {
       width: 160,
       render: (_, record) => (
         <Space size="middle">
-          <Button type="link" onClick={() => message.info(`Editando a ${record.nombre}`)}>
+          <Button type="link" onClick={() => openEditModal(record)}>
             Editar
           </Button>
           <Popconfirm
@@ -121,7 +138,7 @@ export default function App() {
     <div style={{ padding: '24px', maxWidth: '1000px', margin: '0 auto' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
         <Title level={2} style={{ margin: 0 }}>Gestión de Usuarios - Prácticas Ponos</Title>
-        <Button type="primary" onClick={() => setIsModalOpen(true)}>
+        <Button type="primary" onClick={openCreateModal}>
           Nuevo Usuario
         </Button>
       </div>
@@ -154,14 +171,14 @@ export default function App() {
       <Table dataSource={filteredUsers} columns={columns} pagination={{ pageSize: 5 }} />
 
       <Modal
-        title="Crear Nuevo Usuario"
+        title={editingUser ? 'Editar Usuario' : 'Crear Nuevo Usuario'}
         open={isModalOpen}
         onOk={() => form.submit()}
         onCancel={() => setIsModalOpen(false)}
-        okText="Guardar"
+        okText={editingUser ? 'Actualizar' : 'Guardar'}
         cancelText="Cancelar"
       >
-        <Form form={form} layout="vertical" onFinish={handleAddUser}>
+        <Form form={form} layout="vertical" onFinish={handleFinish}>
           <Form.Item name="nombre" label="Nombre" rules={[{ required: true, message: 'Ingresa el nombre' }]}>
             <Input placeholder="Ej. Juan Pérez" />
           </Form.Item>

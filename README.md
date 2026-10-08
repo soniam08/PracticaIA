@@ -1,75 +1,47 @@
-# React + TypeScript + Vite
+# 👥 Panel de Gestión de Usuarios - Prácticas Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Panel administrativo interactivo desarrollado como práctica técnica con **React**, **TypeScript** y la librería de componentes **Ant Design (antd)**, estructurado con **Vite**.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🚀 Características del Proyecto
 
-## React Compiler
+- **CRUD de Usuarios:** Creación y visualización de registros con validaciones en formulario modal (`Modal`, `Form`, `Input`, `Select`).
+- **Eliminación Segura:** Confirmación previa a la eliminación mediante diálogos contextuales (`Popconfirm`).
+- **Búsqueda en Tiempo Real:** Filtrado simultáneo insensible a mayúsculas/minúsculas por coincidencia de texto en nombre o email (`Input.Search`).
+- **Filtro por Roles:** Segmentación de usuarios por perfiles (`Admin`, `Editor`, `Viewer`) mediante selectores dinámicos.
+- **Diseño Estable:** Columnas con anchos fijos y formateo visual con etiquetas de color (`Tag`) para evitar desajustes durante el filtrado.
+- **Persistencia Local:** Sincronización automática del estado en el navegador mediante `localStorage` y `useEffect`.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## 🛠️ Stack Tecnológico
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **Frontend Core:** [React](https://react.dev/) + [TypeScript](https://www.typescriptlang.org/)
+- **Build Tool:** [Vite](https://vitejs.dev/)
+- **Librería de Componentes:** [Ant Design](https://ant.design/) (`antd`)
+- **Control de Versiones:** Git & GitHub
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+---
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## 📦 Puesta en Marcha Local
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Para clonar y ejecutar este proyecto en tu entorno local:
 
-```
+1. **Clonar el repositorio:**
+   ```bash
+   git clone [https://github.com/soniam08/PracticaIA.git](https://github.com/soniam08/PracticaIA.git)
+   cd PracticaIA
+   ```
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
+2. **Instalar dependencias:**
+   ```bash
+   npm install
+   ```
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+3. **Iniciar el servidor de desarrollo:**
+   ```bash
+   npm run dev
+   ```
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
-```
+4. Abrir en el navegador la dirección local indicada por la consola (habitualmente `http://localhost:5173` o `http://localhost:5174`).
